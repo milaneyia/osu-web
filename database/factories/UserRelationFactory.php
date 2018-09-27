@@ -1,5 +1,4 @@
 <?php
-
 /**
  *    Copyright 2015-2017 ppy Pty. Ltd.
  *
@@ -17,12 +16,16 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+use App\Models\UserRelation;
 
-namespace App\Interfaces;
+$factory->define(UserRelation::class, function (Faker\Generator $faker) {
+    return [];
+});
 
-use App\Models\User;
+$factory->state(UserRelation::class, 'friend', function (Faker\Generator $faker) {
+    return ['friend' => true];
+});
 
-interface Messageable
-{
-    public function receiveMessage(User $sender, $message);
-}
+$factory->state(UserRelation::class, 'block', function (Faker\Generator $faker) {
+    return ['foe' => true];
+});

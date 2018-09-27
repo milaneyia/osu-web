@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright 2015-2018 ppy Pty. Ltd.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -18,20 +18,12 @@
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace App\Transformers\API\Chat;
+namespace App\Models\Store;
 
-use App\Models\Chat\Channel;
-use League\Fractal;
-
-class ChannelTransformer extends Fractal\TransformerAbstract
+trait UserTrait
 {
-    public function transform(Channel $channel)
+    public function orders()
     {
-        return [
-            'channel_id' => $channel->channel_id,
-            'name' => $channel->name,
-            'description' => $channel->description,
-            'type' => $channel->type,
-        ];
+        return $this->hasMany(Order::class, 'user_id');
     }
 }
