@@ -17,32 +17,29 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+use App\Models\Build;
+use App\Models\Comment;
+use App\Models\User;
+use Carbon\Carbon;
 
-return [
-    'deleted' => 'deleted',
-    'edited' => 'edited :timeago by :user',
-    'empty' => 'No comments yet.',
-    'replies' => 'Replies',
-    'show_replies' => 'show replies',
-    'title' => 'Comments',
+class CommentTest extends TestCase
+{
+    public function testReplyingToDeletedComment()
+    {
+        $user = factory(User::class)->create();
+        $commentable = factory(Build::class)->create();
+        $parentComment = $commentable->comments()->create([
+            'message' => 'Test',
+            'user_id' => $user->getKey(),
+            'deleted_at' => Carbon::now(),
+        ]);
 
-    'editor' => [
-        'textarea_hint' => [
-            '_' => 'Press enter to :action. Use shift+enter for new line.',
-            'edit' => 'save',
-            'new' => 'post',
-            'reply' => 'reply',
-        ],
-    ],
+        $comment = new Comment([
+            'parent_id' => $parentComment->getKey(),
+            'message' => 'Hello',
+        ]);
 
-    'guest_button' => [
-        'new' => 'Login to comment',
-        'reply' => 'Login to reply',
-    ],
-
-    'placeholder' => [
-        'edit' => 'Edit the comment here',
-        'new' => 'Type new comment here',
-        'reply' => 'Type your response here',
-    ],
-];
+        $this->assertFalse($comment->isValid());
+        $this->assertArrayHasKey('parent_id', $comment->validationErrors()->all());
+    }
+}
